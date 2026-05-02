@@ -1,15 +1,17 @@
 require('dotenv').config()
 const express= require('express')
+const cors=require('cors')
 const pool = require('./db')
 const bcrypt=require('bcrypt')
 const jwt=require('jsonwebtoken')
 const verifyToken=require('./middleware')
 const app = express()
 app.use(express.json())
+app.use(cors())
 const PORT = process.env.PORT || 3000
 app.get('/jobs',verifyToken,async(req,res)=>{
     try{
-        const result = await pool.query('SELECT * FROM jobs')
+        const result = await pool.query('SELECT * FROM jobs WHERE user_id = $1',[req.user.id])
         res.json(result.rows)
     } catch(error){
         res.status(500).json({message: error.message})
@@ -20,7 +22,7 @@ app.post('/jobs',verifyToken,async (req,res)=>{
     try{
         const {company,role,status,applied_date} = req.body
         const result = await pool.query(
-            'INSERT INTO jobs(company,role,status,applied_date) VALUES($1,$2,$3,$4) RETURNING *',[company,role,status,applied_date]
+            'INSERT INTO jobs(company,role,status,applied_date, user_id) VALUES($1,$2,$3,$4,$5) RETURNING *',[company,role,status,applied_date, req.user.id]
         )
         res.status(201).json(result.rows[0])
     } catch(error){
@@ -45,7 +47,7 @@ app.delete('/jobs/:id',verifyToken,async(req,res)=>{
     try{
         const {id}=req.params
         const result = await pool.query(
-            'DELETE FROM jobs WHERE id = $1',[id]
+            'DELETE FROM jobs WHERE id = $1 AND user_id = $2',[id, req.user.id]
         )
         res.json({message:'Job deleted successfully'})
     } catch(error){
