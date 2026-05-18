@@ -11,7 +11,7 @@
 
 This repository contains the backend REST API for **Job Tracker**, a full-stack application for tracking job applications from a separate React frontend.
 
-> Frontend repository: [Job Tracker Frontend](https://github.com/your-username/job-tracker-frontend) <!-- Replace with the actual frontend repo URL. -->
+> Frontend repository: [Job Tracker Frontend](https://github.com/bbalasubramani/job-tracker-frontend) <!-- Replace with the actual frontend repo URL. -->
 
 ## What the API Does
 
